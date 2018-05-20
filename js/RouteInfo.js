@@ -1,24 +1,35 @@
-class RouteGraph {
+export class RouteInfo {
 
     constructor() {
         this.StationNameToNode = new Map();
     }
 
     addRoute(originName, destinationName, distance) {
-        let originNode = getStation(originName);
-        let destinationNode = getStation(destination);
+        let originNode = getOrCreateStation(originName);
+        let destinationNode = getOrCreateStation(destination);
         originNode.connectTo(destinationNode, distance);
     }
 
     getStation(stationName) {
+        if (!this.isStation(stationName)) {
+            throw "No such station: " + stationName;
+        }
+        return this.StationNameToNode.get(stationName);
+    }
+
+    getOrCreateStation(stationName) {
         let stationNode = null;
-        if (!this.StationNameToNode.has(stationName)) {
+        if (!this.isStation(stationName)) {
             stationNode = new Station(stationName);
             this.StationNameToNode.set(stationName, stationNode);
         } else {
-            stationNode = this.StationNameToNode.get(stationName)
+            stationNode = this.getStation(stationName);
         }
         return stationNode;
+    }
+
+    isStation(stationName) {
+        return this.StationNameToNode.has(stationName);
     }
 }
 
