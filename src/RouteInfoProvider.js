@@ -1,29 +1,32 @@
-import RouteInfo from "./RouteInfo.js";
+/* jshint esversion: 6*/
+let RouteInfo = require("./RouteInfo.js").RouteInfo;
 
-class RouteInfoProvider {
+function RouteInfoProvider(routeInfo) {
 
-    constructor(routeInfo) {
-        if (! (routeinfo instanceof RouteInfo)) {
-            throw "RouteInfoProvider only works with instances of RouteInfo"
-        }
-        this.RouteInfo = routeInfo;
+    if (! (routeInfo instanceof RouteInfo)) {
+        throw "RouteInfoProvider only works with instances of RouteInfo";
     }
-
-    getDistance(stations) {
+    this.RouteInfo = routeInfo;
+    this.getDistance = function(stations) {
         const stationNames = stations.split("-");
         let totalDistance = 0;
-        for (let stationName of stationNames) {
-            if (!this.RouteInfo.isStation(stationName)) {
+        for (let stationIdx = 0; stationIdx < stationNames.length - 1; stationIdx++) {
+            let originName = stationNames[stationIdx];
+            let destinationName = stationNames[stationIdx + 1];
+
+            if (!this.RouteInfo.isStation(originName)) {
                 console.log("NO SUCH ROUTE");
                 return;
             }
-            let station = this.RouteInfo.getStation(stationName);
-            totalDistance += station.getDistanceTo(station);
+            let origin = this.RouteInfo.getStation(originName);
+            let destination = this.RouteInfo.getStation(destinationName);
+            totalDistance += origin.getDistanceTo(destination);
             if (isNaN(totalDistance)) {
                 console.log("NO SUCH ROUTE");
+                return;
             }
-            return;
         }
         return totalDistance;
-    }
+    };
 }
+module.exports.RouteInfoProvider = RouteInfoProvider;
