@@ -1,5 +1,6 @@
 /* jshint esversion: 6*/
 let RouteInfo = require("./RouteInfo.js").RouteInfo;
+let Path = require("./Path.js").Path;
 
 function RouteInfoProvider(routeInfo) {
 
@@ -15,18 +16,28 @@ function RouteInfoProvider(routeInfo) {
             let destinationName = stationNames[stationIdx + 1];
 
             if (!this.RouteInfo.isStation(originName)) {
-                console.log("NO SUCH ROUTE");
-                return;
+                return "NO SUCH ROUTE";
             }
             let origin = this.RouteInfo.getStation(originName);
             let destination = this.RouteInfo.getStation(destinationName);
             totalDistance += origin.getDistanceTo(destination);
             if (isNaN(totalDistance)) {
-                console.log("NO SUCH ROUTE");
-                return;
+                return "NO SUCH ROUTE";
             }
         }
         return totalDistance;
+    };
+
+    this.findPaths = function(originName, destinationName, pathPredicate) {
+
+        let originStation = this.RouteInfo.getStation(originName);
+        let destinationStation = this.RouteInfo.getStation(destinationName);
+
+        function doDFS(stationNode) {
+
+        }
+
+
     };
 }
 module.exports.RouteInfoProvider = RouteInfoProvider;

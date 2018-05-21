@@ -12,8 +12,13 @@ for (let ge of graphEntries) {
 }
 const routeInfoProvider = new RouteInfoProvider(routeInfo);
 
-console.log(routeInfoProvider.getDistance("A-B-C"));
-console.log(routeInfoProvider.getDistance("A-D"));
-console.log(routeInfoProvider.getDistance("A-D-C"));
-console.log(routeInfoProvider.getDistance("A-E-B-C-D"));
-console.log(routeInfoProvider.getDistance("A-E-D"));
+let outputCount = 0;
+
+console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-B-C"));
+console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-D"));
+console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-D-C"));
+console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-B-C-D"));
+console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-D"));
+
+routeInfoProvider.findPaths("C", "C", p => p.TotalDistance <= 3);
+routeInfoProvider.findPaths("A", "C", p => p.TotalDistance === 4);
