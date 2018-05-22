@@ -28,13 +28,32 @@ function RouteInfoProvider(routeInfo) {
         return totalDistance;
     };
 
-    this.findPaths = function(originName, destinationName, pathPredicate) {
+    this.findPaths = function(originName, destinationName, pathPredicate, continuationPredicate) {
 
         let originStation = this.RouteInfo.getStation(originName);
+
         let destinationStation = this.RouteInfo.getStation(destinationName);
 
-        function doDFS(stationNode) {
+        let paths = [];
 
+        let nodeStack = [originStation];
+
+        let currentPath = new Path(originStation);
+
+        doDFSTraversal(originStation);
+
+        function doDFSTraversal(stationNode) {
+            let outboundRoutes = stationNode.OutboundConnections;
+
+            for (let route of outboundRoutes) {
+                currentPath.pushRoute(route);
+
+                // IF we're at the destination, and pathPredicate is satisfied, get the station
+                // list and put it onto the list of paths.
+                // IF the continuationPredicate is satisfied, doDFSTraversal on destination of current outbound route
+                // OTHERWISE, pop the last station from the currentPath, and move on to the next route.
+
+            }
         }
 
 

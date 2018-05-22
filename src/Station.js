@@ -21,7 +21,7 @@ function Station(name) {
     };
 
     this.getDirectRouteTo = function(destinationStation) {
-        return this.OutboundConnections.filter(r => (r.DestinationStation.getName() === destinationStation.getName()))[0];
+        return this.OutboundConnections.filter(r => (r.DestinationStation.equals(destinationStation)))[0];
     };
 
     this.connectTo = function(destinationStation, distance) {
@@ -31,6 +31,10 @@ function Station(name) {
         }
         let route = new Route(destinationStation, distance);
         this.OutboundConnections.push(route);
+    };
+
+    this.equals = function(station) {
+        return this.getName() === station.getName();
     };
 }
 module.exports.Station = Station;

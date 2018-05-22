@@ -20,5 +20,5 @@ console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance(
 console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-B-C-D"));
 console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-D"));
 
-routeInfoProvider.findPaths("C", "C", p => p.TotalDistance <= 3);
-routeInfoProvider.findPaths("A", "C", p => p.TotalDistance === 4);
+routeInfoProvider.findPaths("C", "C", p => p.getStopCount() <= 3, p => p.getStopCount() < 3);
+routeInfoProvider.findPaths("A", "C", p => p.getStopCount() === 4, p => p.getStopCount() < 4);

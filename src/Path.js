@@ -1,17 +1,54 @@
 /* jshint esversion:6*/
 function Path(origin) {
-    this.TripDistance = 0;
-
+    this.Origin = origin;
     this.Stops = [origin];
+    this.TripDistance = 0;
+    this.DistanceSegments = [];
 
-    this.addStop = function(station) {
+    this.pushStation = function(station, distance) {
         let currentStation = this.Stops[this.Stops.length - 1];
-        let distance = currentStation.getDistanceTo(station);
+        if (distance === undefined) {
+            distance = currentStation.getDistanceTo(station);
+        }
         if (isNaN(distance)) {
             throw "No route exists between " + currentStation.getName() + " " + station.getName;
         }
         this.Stops.push(station);
         this.TripDistance += distance;
+        this.DistanceSegments.push(distance);
+    };
+
+    this.pushRoute = function(route) {
+        this.pushStation(route.DestinationStation, route.Distance);
+    };
+
+    this.popStation = function() {
+        if (this.getStopCount() > 0) {
+            const lastStop = this.Stops.pop();
+            const distanceToLastStop = this.DistanceSegments.pop();
+            this.TripDistance -= distanceToLastStop;
+            return true;
+        }
+        // Pop was unsuccessful
+        return false;
+    };
+
+    this.getStopCount = function() {
+        // Origin doesn't count as a stop
+        return this.Stops.length - 1;
+    };
+
+    this.getEndPoint = function() {
+        if (this.Stops.length === 1) {
+            // A path must have at least 2 stops, to have an end-point
+            return null;
+        } else {
+            return this.Stops[this.Stops.length - 1];
+        }
+    };
+
+    this.getStops = function() {
+        return this.Stops.slice(0);
     };
 }
 module.exports.Path = Path;
