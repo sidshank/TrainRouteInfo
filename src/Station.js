@@ -36,5 +36,9 @@ function Station(name) {
     this.equals = function(station) {
         return this.getName() === station.getName();
     };
+
+    this.toString = function() {
+            return this.getName();
+    };
 }
 module.exports.Station = Station;

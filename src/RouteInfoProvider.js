@@ -1,7 +1,6 @@
 /* jshint esversion: 6*/
 let RouteInfo = require("./RouteInfo.js").RouteInfo;
 let Path = require("./Path.js").Path;
-
 function RouteInfoProvider(routeInfo) {
 
     if (! (routeInfo instanceof RouteInfo)) {
@@ -29,33 +28,51 @@ function RouteInfoProvider(routeInfo) {
     };
 
     this.findPaths = function(originName, destinationName, pathPredicate, continuationPredicate) {
-
         let originStation = this.RouteInfo.getStation(originName);
 
         let destinationStation = this.RouteInfo.getStation(destinationName);
 
-        let paths = [];
+        let wayPointsList = [];
 
-        let nodeStack = [originStation];
-
-        let currentPath = new Path(originStation);
+        let currentPath = null;
 
         doDFSTraversal(originStation);
 
+        return wayPointsList;
+
         function doDFSTraversal(stationNode) {
-            let outboundRoutes = stationNode.OutboundConnections;
+            console.log("Visiting " + stationNode);
 
-            for (let route of outboundRoutes) {
-                currentPath.pushRoute(route);
-
-                // IF we're at the destination, and pathPredicate is satisfied, get the station
-                // list and put it onto the list of paths.
-                // IF the continuationPredicate is satisfied, doDFSTraversal on destination of current outbound route
-                // OTHERWISE, pop the last station from the currentPath, and move on to the next route.
-
+            if (currentPath === null){
+                currentPath = new Path(stationNode);
+            } else {
+                currentPath.pushStation(stationNode);
             }
-        }
+            console.log("Current Path is: " + currentPath);
 
+            let currentEndPoint = currentPath.getEndPoint();
+
+            if (currentEndPoint && currentEndPoint.equals(destinationStation) && pathPredicate(currentPath)) {
+                console.log("Found a path that matches the predicate: " + currentPath);
+                wayPointsList.push(currentPath.getWayPoints());
+            }
+
+            if (continuationPredicate(currentPath)) {
+                let outboundRoutes = stationNode.OutboundConnections;
+
+                for (let route of outboundRoutes) {
+                    let routeDestination = route.DestinationStation;
+                    doDFSTraversal(routeDestination);
+                }
+            } else {
+                console.log("Continuation predicate is no longer true, backtracking ... ");
+            }
+
+            currentPath.popStation();
+        }
+    };
+
+    this.findShortestDistance = function() {
 
     };
 }

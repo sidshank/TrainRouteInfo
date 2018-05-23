@@ -14,11 +14,29 @@ const routeInfoProvider = new RouteInfoProvider(routeInfo);
 
 let outputCount = 0;
 
-console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-B-C"));
-console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-D"));
-console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-D-C"));
-console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-B-C-D"));
-console.log("Output #" + (++outputCount) + ": " + routeInfoProvider.getDistance("A-E-D"));
+function print(arg) {
 
-routeInfoProvider.findPaths("C", "C", p => p.getStopCount() <= 3, p => p.getStopCount() < 3);
-routeInfoProvider.findPaths("A", "C", p => p.getStopCount() === 4, p => p.getStopCount() < 4);
+    console.log("");
+    console.log("=============================");
+    console.log("Output #" + (++outputCount) + ": ");
+    console.log("=============================");
+    if (arg !== undefined) {
+        console.log(arg);
+    }
+}
+
+print(routeInfoProvider.getDistance("A-B-C"));
+print(routeInfoProvider.getDistance("A-D"));
+print(routeInfoProvider.getDistance("A-D-C"));
+print(routeInfoProvider.getDistance("A-E-B-C-D"));
+print(routeInfoProvider.getDistance("A-E-D"));
+
+print();
+routeInfoProvider.findPaths("C", "C", p => p.getStopCount() <= 3, p => p.getStopCount() < 3).forEach(wpList => console.log(wpList.toString()));
+
+print();
+routeInfoProvider.findPaths("A", "C", p => p.getStopCount() === 4, p => p.getStopCount() < 4).forEach(wpList => console.log(wpList.toString()));
+
+
+print();
+routeInfoProvider.findPaths("C", "C", p => p.TripDistance < 30, p => p.TripDistance < 30).forEach(wpList => console.log(wpList.toString()));

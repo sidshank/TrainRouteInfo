@@ -1,4 +1,5 @@
 /* jshint esversion:6*/
+let WayPoints = require("./WayPoints.js").WayPoints;
 function Path(origin) {
     this.Origin = origin;
     this.Stops = [origin];
@@ -47,8 +48,12 @@ function Path(origin) {
         }
     };
 
-    this.getStops = function() {
-        return this.Stops.slice(0);
+    this.getWayPoints = function() {
+        return new WayPoints(this.Stops.slice(0));
+    };
+
+    this.toString = function() {
+        return this.Stops.map(s => s.getName()).join(",");
     };
 }
 module.exports.Path = Path;
