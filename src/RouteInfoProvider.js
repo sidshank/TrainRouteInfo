@@ -1,47 +1,48 @@
 /* jshint esversion: 6*/
 let RouteInfo = require("./RouteInfo.js").RouteInfo;
 let Path = require("./Path.js").Path;
-let WayPoints = require("./WayPoints.js").WayPoints;
+let ImmutablePath = require("./ImmutablePath.js").ImmutablePath;
 let Utils = require("./Utils.js").Utils;
 
-function RouteInfoProvider(routeInfo) {
+class RouteInfoProvider {
 
-    if (! (routeInfo instanceof RouteInfo)) {
-        throw "RouteInfoProvider only works with instances of RouteInfo";
-    }
-    this.RouteInfo = routeInfo;
-    this.getDistance = function(stations) {
+    constructor(routeInfo) {
+        if (! (routeInfo instanceof RouteInfo)) {
+            throw "RouteInfoProvider only works with instances of RouteInfo";
+        }
+        this.RouteInfo = routeInfo;
+    }    
+
+    getDistance(stations) {
         const stationNames = stations.split("-");
-        let totalDistance = 0;
-        for (let stationIdx = 0; stationIdx < stationNames.length - 1; stationIdx++) {
-            let originName = stationNames[stationIdx];
-            let destinationName = stationNames[stationIdx + 1];
+        const originStation = this.RouteInfo.getStation(stationNames[0]);
+        const path = new Path(originStation);
+        for (let stationIdx = 1; stationIdx < stationNames.length; stationIdx++) {
 
-            if (!this.RouteInfo.isStation(originName)) {
-                return "NO SUCH ROUTE";
-            }
-            let origin = this.RouteInfo.getStation(originName);
+            let destinationName = stationNames[stationIdx];
             let destination = this.RouteInfo.getStation(destinationName);
-            totalDistance += origin.getDistanceTo(destination);
-            if (isNaN(totalDistance)) {
+            try {
+                path.pushStation(destination);
+            } catch (ex) {
+                Utils.debuglog(ex);
                 return "NO SUCH ROUTE";
             }
         }
-        return totalDistance;
-    };
+        return path.TripDistance;
+    }
 
-    this.findPaths = function(originName, destinationName, pathPredicate, continuationPredicate) {
+    findPaths(originName, destinationName, pathPredicate, continuationPredicate) {
         let originStation = this.RouteInfo.getStation(originName);
 
         let destinationStation = this.RouteInfo.getStation(destinationName);
 
-        let wayPointsList = [];
+        let pathList = [];
 
         let currentPath = null;
 
         doDFSTraversal(originStation);
 
-        return wayPointsList;
+        return pathList;
 
         function doDFSTraversal(stationNode) {
             Utils.debuglog("Visiting " + stationNode);
@@ -57,7 +58,7 @@ function RouteInfoProvider(routeInfo) {
 
             if (currentEndPoint && currentEndPoint.equals(destinationStation) && pathPredicate(currentPath)) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
-                wayPointsList.push(currentPath.getWayPoints());
+                pathList.push(currentPath.asImmutablePath());
             }
 
             if (continuationPredicate(currentPath)) {
@@ -73,14 +74,14 @@ function RouteInfoProvider(routeInfo) {
 
             currentPath.popStation();
         }
-    };
+    }
 
-    this.findShortestDistance = function(originName, destinationName) {
+    findShortestDistance(originName, destinationName) {
         let originStation = this.RouteInfo.getStation(originName);
         let destinationStation = this.RouteInfo.getStation(destinationName);
 
         let nodeQueue = [originStation];
-        let paths = [new WayPoints(originStation)];
+        let paths = [new ImmutablePath(originStation)];
         let done = [];
         let shortestDistance = Infinity;
 
@@ -101,7 +102,6 @@ function RouteInfoProvider(routeInfo) {
 
             if (currentEndPoint && stationNode.equals(destinationStation) && currentPath.getDistance() < shortestDistance) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
-                shortestPath = currentPath;
                 shortestDistance = currentPath.getDistance();
             } else {
                 let outboundRoutes = stationNode.OutboundConnections;
@@ -109,11 +109,11 @@ function RouteInfoProvider(routeInfo) {
                     let dest = route.DestinationStation;
                     if (done.indexOf(dest) === -1 || dest.equals(destinationStation)) {
                         nodeQueue.push(dest);
-                        paths.push(currentPath.add(dest));
+                        paths.push(currentPath.pushStation(dest));
                     }
                 }
             }
         }
-    };
+    }
 }
 module.exports.RouteInfoProvider = RouteInfoProvider;

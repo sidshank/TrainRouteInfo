@@ -20,10 +20,10 @@ const routeInfoProvider = new RouteInfoProvider(routeInfo);
 let outputCount = 0;
 
 Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-B-C"));
-Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-D"));
-Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-D-C"));
-Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-E-B-C-D"));
-Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-E-D"));
+Utils.resultlog("Distance of the route 'A-D'", routeInfoProvider.getDistance("A-D"));
+Utils.resultlog("Distance of the route 'A-D-C'", routeInfoProvider.getDistance("A-D-C"));
+Utils.resultlog("Distance of the route 'A-E-B-C-D'", routeInfoProvider.getDistance("A-E-B-C-D"));
+Utils.resultlog("Distance of the route 'A-E-D'", routeInfoProvider.getDistance("A-E-D"));
 
 Utils.resultlog("The number of trips starting at C and ending at C with a maximum of 3 stops");
 let paths = routeInfoProvider.findPaths("C", "C", p => p.getStopCount() <= 3, p => p.getStopCount() < 3);
@@ -33,11 +33,9 @@ Utils.resultlog("The number of trips starting at A and ending at C with exactly 
 paths = routeInfoProvider.findPaths("A", "C", p => p.getStopCount() === 4, p => p.getStopCount() < 4);
 paths.forEach(wpList => console.log(wpList.toString()));
 
-Utils.resultlog("The length of the shortest route (in terms of distance to travel) from A to C");
-console.log("Shortest distance is: " + routeInfoProvider.findShortestDistance("A", "C"));
+Utils.resultlog("The length of the shortest route (in terms of distance to travel) from A to C", routeInfoProvider.findShortestDistance("A", "C"));
 
-Utils.resultlog("The length of the shortest route (in terms of distance to travel) from B to B");
-console.log("Shortest distance is: " + routeInfoProvider.findShortestDistance("B", "B"));
+Utils.resultlog("The length of the shortest route (in terms of distance to travel) from B to B", routeInfoProvider.findShortestDistance("B", "B"));
 
 Utils.resultlog("The number of different routes from C to C with a distance of less than 30");
 paths = routeInfoProvider.findPaths("C", "C", p => p.TripDistance < 30, p => p.TripDistance < 30);

@@ -1,4 +1,4 @@
-var Utils = {
+const Utils = {
     isDebugging: false,
 
     outputCount: 0,
@@ -11,12 +11,14 @@ var Utils = {
 
     resultlog: function(description, value) {
         console.log("");
+        console.log("");
         console.log("=============================");
         console.log("Output #" + (++this.outputCount) + ": " + description);
         console.log("=============================");
         if (value !== undefined) {
             console.log(value);
         }
+        console.log("");
     }
 };
 

@@ -1,26 +1,29 @@
 /* jshint esversion: 6 */
 let Station = require("./Station.js").Station;
 let Utils = require("./Utils.js").Utils;
-function RouteInfo() {
 
-    this.StationNameToNode = new Map();
+class RouteInfo {
 
-    this.addRoute = function(originName, destinationName, distance) {
+    constructor() {
+        this.StationNameToNode = new Map();
+    }   
+
+    addRoute(originName, destinationName, distance) {
         let originNode = this.getOrCreateStation(originName);
         let destinationNode = this.getOrCreateStation(destinationName);
         originNode.connectTo(destinationNode, distance);
         Utils.debuglog("Added route from " + originName + " to " + destinationName + " : " + distance);
         return this;
-    };
+    }
 
-    this.getStation = function(stationName) {
+    getStation(stationName) {
         if (!this.isStation(stationName)) {
             throw "No such station: " + stationName;
         }
         return this.StationNameToNode.get(stationName);
-    };
+    }
 
-    this.getOrCreateStation = function(stationName) {
+    getOrCreateStation(stationName) {
         let stationNode = null;
         if (!this.isStation(stationName)) {
             stationNode = new Station(stationName);
@@ -30,11 +33,11 @@ function RouteInfo() {
             stationNode = this.getStation(stationName);
         }
         return stationNode;
-    };
+    }
 
-    this.isStation = function(stationName) {
+    isStation(stationName) {
         return this.StationNameToNode.has(stationName);
-    };
+    }
 }
 
 module.exports.RouteInfo = RouteInfo;
