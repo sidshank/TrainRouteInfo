@@ -12,7 +12,7 @@ function Path(origin) {
             distance = currentStation.getDistanceTo(station);
         }
         if (isNaN(distance)) {
-            throw "No route exists between " + currentStation.getName() + " " + station.getName;
+            throw "No route exists between " + currentStation.getName() + " " + station.getName();
         }
         this.Stops.push(station);
         this.TripDistance += distance;
