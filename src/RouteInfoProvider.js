@@ -1,60 +1,74 @@
 /* jshint esversion: 6*/
-let RouteInfo = require("./RouteInfo.js").RouteInfo;
 let Path = require("./Path.js").Path;
-let ImmutablePath = require("./ImmutablePath.js").ImmutablePath;
 let Utils = require("./Utils.js").Utils;
+let GraphBuilder = require("./GraphBuilder.js").GraphBuilder;
+let ImmutablePath = require("./ImmutablePath.js").ImmutablePath;
 
+/**
+ * Represents a class that takes a graph with nodes and edges, and is
+ * able to respond to questions about this graph.
+ */
 class RouteInfoProvider {
 
-    constructor(routeInfo) {
-        if (! (routeInfo instanceof RouteInfo)) {
-            throw "RouteInfoProvider only works with instances of RouteInfo";
-        }
-        this.RouteInfo = routeInfo;
-    }    
+    /**
+     * Constructs a RouteInfoProvider
+     * @param {Graph} graph - Representation of a graph with nodes and edges 
+     */
+    constructor(graph) {
+        this.Graph = graph;
+    }
 
+    /**
+     * Returns the total distance of the specified path i.e. the sum of 
+     * distances of each direct connection.
+     * @param {string} stations - A hyphen delimited list of station names
+     * @return {number}
+     */
     getDistance(stations) {
         const stationNames = stations.split("-");
-        const originStation = this.RouteInfo.getStation(stationNames[0]);
-        const path = new Path(originStation);
+        const sourceStation = this.Graph.getNode(stationNames[0]);
+        const path = new Path(sourceStation);
         for (let stationIdx = 1; stationIdx < stationNames.length; stationIdx++) {
-
             let destinationName = stationNames[stationIdx];
-            let destination = this.RouteInfo.getStation(destinationName);
+            let destination = this.Graph.getNode(destinationName);
             try {
-                path.pushStation(destination);
+                path.pushNode(destination);
             } catch (ex) {
                 Utils.debuglog(ex);
                 return "NO SUCH ROUTE";
             }
         }
-        return path.TripDistance;
+        return path.Distance;
     }
 
-    findPaths(originName, destinationName, pathPredicate, continuationPredicate) {
-        let originStation = this.RouteInfo.getStation(originName);
+    /**
+     * Finds all paths between a source and destination, that match the specified pathPredicate
+     * @param {string} sourceName - Name of source
+     * @param {string} destinationName - Name of destination
+     * @param {Function} pathPredicate - Path => Boolean predicate, meant to return TRUE for a Path that matches the search criteria
+     * @param {Function} continuationPredicate - Path => Boolean predicate, meant to return TRUE for a Path, to indicate that continued traversal is OK
+     * @return {Array} pathList - List of paths
+     */
+    findPaths(sourceName, destinationName, pathPredicate, continuationPredicate) {
+        let sourceStation = this.Graph.getNode(sourceName);
 
-        let destinationStation = this.RouteInfo.getStation(destinationName);
+        let destinationStation = this.Graph.getNode(destinationName);
 
         let pathList = [];
 
         let currentPath = null;
 
-        doDFSTraversal(originStation);
-
-        return pathList;
-
-        function doDFSTraversal(stationNode) {
+        const doDFSTraversal = (stationNode) => {
             Utils.debuglog("Visiting " + stationNode);
 
-            if (currentPath === null){
+            if (currentPath === null) {
                 currentPath = new Path(stationNode);
             } else {
-                currentPath.pushStation(stationNode);
+                currentPath.pushNode(stationNode);
             }
             Utils.debuglog("Current Path is: " + currentPath);
 
-            let currentEndPoint = currentPath.getEndPoint();
+            let currentEndPoint = currentPath.EndPoint;
 
             if (currentEndPoint && currentEndPoint.equals(destinationStation) && pathPredicate(currentPath)) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
@@ -62,58 +76,66 @@ class RouteInfoProvider {
             }
 
             if (continuationPredicate(currentPath)) {
-                let outboundRoutes = stationNode.OutboundConnections;
+                let outboundRoutes = stationNode.OutEdges;
 
                 for (let route of outboundRoutes) {
-                    let routeDestination = route.DestinationStation;
-                    doDFSTraversal(routeDestination);
+                    doDFSTraversal(route.DestinationNode);
                 }
             } else {
                 Utils.debuglog("Continuation predicate is no longer true, backtracking ... ");
             }
-
-            currentPath.popStation();
+            currentPath.popNode();
         }
+
+        doDFSTraversal(sourceStation);
+
+        return pathList;
     }
 
-    findShortestDistance(originName, destinationName) {
-        let originStation = this.RouteInfo.getStation(originName);
-        let destinationStation = this.RouteInfo.getStation(destinationName);
-
-        let nodeQueue = [originStation];
-        let paths = [new ImmutablePath(originStation)];
-        let done = [];
+    /**
+     * Find the shortest distance between a source and a destination
+     * @param {string} sourceName 
+     * @param {string} destinationName
+     * @return {number} The distance of the shortest path between source and destination
+     */
+    findShortestDistance(sourceName, destinationName) {
+        const sourceStation = this.Graph.getNode(sourceName);
+        const destinationStation = this.Graph.getNode(destinationName);
+        
+        let processedStations = [];
         let shortestDistance = Infinity;
+        let stationProcessingQueue = [sourceStation];
+        let paths = [new ImmutablePath(sourceStation)];
 
-        while (nodeQueue.length !== 0) {
-            visit();
-        }
+        const visit = () => {
 
-        return shortestDistance;
-
-        function visit() {
-
-            let stationNode = nodeQueue.shift();
+            let stationNode = stationProcessingQueue.shift();
 
             let currentPath = paths.shift();
-            done.push(stationNode);
-            let currentEndPoint = currentPath.getEndPoint();
+            processedStations.push(stationNode);
+            let currentEndPoint = currentPath.EndPoint;
             Utils.debuglog("Visiting " + stationNode);
 
-            if (currentEndPoint && stationNode.equals(destinationStation) && currentPath.getDistance() < shortestDistance) {
+            if (currentEndPoint && stationNode.equals(destinationStation) && currentPath.Distance < shortestDistance) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
-                shortestDistance = currentPath.getDistance();
+                shortestDistance = currentPath.Distance;
             } else {
-                let outboundRoutes = stationNode.OutboundConnections;
+                let outboundRoutes = stationNode.OutEdges;
                 for (let route of outboundRoutes) {
-                    let dest = route.DestinationStation;
-                    if (done.indexOf(dest) === -1 || dest.equals(destinationStation)) {
-                        nodeQueue.push(dest);
-                        paths.push(currentPath.pushStation(dest));
+                    let dest = route.DestinationNode;
+                    if (processedStations.indexOf(dest) === -1 || dest.equals(destinationStation)) {
+                        stationProcessingQueue.push(dest);
+                        paths.push(currentPath.pushNode(dest));
                     }
                 }
             }
         }
+
+        while (stationProcessingQueue.length !== 0) {
+            visit();
+        }
+
+        return shortestDistance;
     }
 }
 module.exports.RouteInfoProvider = RouteInfoProvider;

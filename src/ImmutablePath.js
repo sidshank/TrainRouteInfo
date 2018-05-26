@@ -1,32 +1,26 @@
 /* jshint esversion:6*/
-class ImmutablePath {
+let AbstractPath = require("./AbstractPath.js").AbstractPath;
 
-    constructor(stops) {
-        this.Stops = [].concat(stops);
-    }
-    
-    toString() {
-        return this.Stops.map(s => s.getName()).join(",");
-    }
+/**
+ * Class representing an immutable Path
+ */
+class ImmutablePath extends AbstractPath {
 
-    getEndPoint() {
-        if (this.Stops.length === 1) {
-            return null;
-        } else {
-            return this.Stops[this.Stops.length - 1];
-        }
+    /**
+     * Construct an immutable path
+     * @param {Array[Node]} nodes 
+     */
+    constructor(nodes) {
+        super(nodes);
     }
 
-    pushStation(stop) {
-        return new ImmutablePath(this.Stops.concat(stop))
-    }
-
-    getDistance() {
-        let distance = 0;
-        for (let s = 0; s < this.Stops.length - 1; s++) {
-            distance += this.Stops[s].getDistanceTo(this.Stops[s + 1]);
-        }
-        return distance;
+    /**
+     * Add a node to an immutable path (does not modify this object)
+     * @param {Node} node 
+     * @return {ImmutablePath} A new ImmutablePath with the specified node added to existing nodes
+     */
+    pushNode(node) {
+        return new ImmutablePath(this.Nodes.concat(node))
     }
 }
 module.exports.ImmutablePath = ImmutablePath;
