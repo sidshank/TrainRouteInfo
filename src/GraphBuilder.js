@@ -7,8 +7,74 @@ let Utils = require("./Utils.js").Utils;
  */
 class GraphBuilder {
 
+    /**
+     * Construct a graph builder object
+     */
     constructor() {
         this.NodeNameToNodeObj = new Map();
+        this.EntryDelimiter = ","; // Comma is default
+        this.Recognizer = /(\w)(\w)(\d+)/; // LetterLetterNumber is default
+        this.Representation = "";
+    }
+
+    /**
+     * Sets the inter-entry delimiter, based on which the graph representation
+     * must be split
+     * @param {string} delim The inter-entry delimiter
+     */
+    setEntryDelimiter(delim) {
+        this.EntryDelimiter = delim;
+        return this;
+    }
+
+    /**
+     * Sets the encoding scheme to recognize a graph entry. Options are
+     * lln (LetterLetterNumber) or wwn (WordWordNumber)
+     * @param {string} scheme Must be lln or wwn
+     */
+    setEncodingScheme(scheme) {
+        switch(scheme) {
+            case "lln":
+                this.Recognizer = /(\w)(\w)(\d+)/;
+                break;
+            case "wwn":
+                this.Recognizer = /(\w+)-(\w+)-(\d+)/
+                break;
+            default:
+                throw "Invalid encoding scheme. Valid options are: lln, wwn";
+        }
+        return this;
+    }
+
+    /**
+     * Sets the graph representation
+     * @param {string} repr The graph representation 
+     */
+    usingRepresentation(repr) {
+        this.Representation = repr;
+        return this;
+    }
+
+    /**
+     * Build the graph based on entry delimiter, encoding scheme and the
+     * specified graph representation.
+     */
+    build() {
+        const graphEntries = this.Representation.split(this.EntryDelimiter)
+                                                .map(entry => entry.trim());
+        for (let entry of graphEntries) {
+            let match, source, destination, distance;
+            try {
+                [match, source, destination, distance] = entry.match(this.Recognizer);
+            } catch (ex) {
+                console.log(ex);
+                throw "Invalid entry in graph representation: " + entry;
+            }
+            
+            distance = parseFloat(distance, 10);
+            this.addConnection(source, destination, distance);
+        }
+        return this.Graph;
     }
 
     /**

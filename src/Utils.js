@@ -1,10 +1,10 @@
 const Utils = {
-    isDebugging: false,
+    isLoggingEnabled: false,
 
     outputCount: 0,
 
     debuglog: function(arg) {
-        if (this.isDebugging) {
+        if (this.isLoggingEnabled) {
             console.log(arg);
         }
     },

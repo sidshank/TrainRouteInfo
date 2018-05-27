@@ -5,21 +5,19 @@ let RouteInfoProvider  = require("./RouteInfoProvider.js").RouteInfoProvider;
 let Utils  = require("./Utils.js").Utils;
 
 // Set to TRUE to print graph construction and travsersal logs
-Utils.isDebugging = false;
+Utils.isLoggingEnabled = false;
 
 /* BUILD THE GRAPH REPRESENTATION */
-const graphBuilder = new GraphBuilder();
 const graphRepresentation = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
-const graphEntries = graphRepresentation.split(",").map(ge => ge.trim());
-for (let ge of graphEntries) {
-    let source, destination, distance;
-    [source, destination, distance] = ge.split("");
-    distance = parseFloat(distance, 10);
-    graphBuilder.addConnection(source, destination, distance);
-}
+const graphBuilder = new GraphBuilder();
+
+let graph = graphBuilder.setEntryDelimiter(",")
+            .setEncodingScheme("lln") // For entries of the form AB20
+            .usingRepresentation(graphRepresentation)
+            .build();
 
 /* INSTANTIATE A ROUTEINFOPROVIDER TO ANSWER ROUTE RELATED QUESTIONS*/
-const routeInfoProvider = new RouteInfoProvider(graphBuilder.Graph);
+const routeInfoProvider = new RouteInfoProvider(graph);
 
 /* OUTPUT RESPONSES TO QUESTIONS */
 Utils.resultlog("Distance of the route 'A-B-C'", routeInfoProvider.getDistance("A-B-C"));
