@@ -5,7 +5,7 @@ class AbstractPath {
 
     /**
      * Constructor. Only meant to be called from concrete instances of AbstractPath
-     * @param {Node | Array[Node]} nodes 
+     * @param {Array} nodes 
      */
     constructor(nodes) {
         if (new.target === AbstractPath) {

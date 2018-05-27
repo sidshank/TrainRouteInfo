@@ -8,7 +8,7 @@ class ImmutablePath extends AbstractPath {
 
     /**
      * Construct an immutable path
-     * @param {Array[Node]} nodes 
+     * @param {Array} nodes 
      */
     constructor(nodes) {
         super(nodes);
