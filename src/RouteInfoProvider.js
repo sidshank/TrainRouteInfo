@@ -58,7 +58,9 @@ class RouteInfoProvider {
 
         let currentPath = null;
 
-        const doDFSTraversal = (stationNode) => {
+        const visit = (stationNode) => {
+            // Visits using DFS traversal
+
             Utils.debuglog("Visiting " + stationNode);
 
             if (currentPath === null) {
@@ -70,7 +72,8 @@ class RouteInfoProvider {
 
             let currentEndPoint = currentPath.EndPoint;
 
-            if (currentEndPoint && currentEndPoint.equals(destinationStation) && pathPredicate(currentPath)) {
+            if (currentEndPoint && currentEndPoint.equals(destinationStation) 
+                                && pathPredicate(currentPath)) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
                 pathList.push(currentPath.asImmutablePath());
             }
@@ -79,7 +82,7 @@ class RouteInfoProvider {
                 let outboundRoutes = stationNode.OutEdges;
 
                 for (let route of outboundRoutes) {
-                    doDFSTraversal(route.DestinationNode);
+                    visit(route.DestinationNode);
                 }
             } else {
                 Utils.debuglog("Continuation predicate is no longer true, backtracking ... ");
@@ -87,7 +90,7 @@ class RouteInfoProvider {
             currentPath.popNode();
         }
 
-        doDFSTraversal(sourceStation);
+        visit(sourceStation);
 
         return pathList;
     }
@@ -101,14 +104,14 @@ class RouteInfoProvider {
     findShortestDistance(sourceName, destinationName) {
         const sourceStation = this.Graph.getNode(sourceName);
         const destinationStation = this.Graph.getNode(destinationName);
-        
+
         let processedStations = [];
         let shortestDistance = Infinity;
         let stationProcessingQueue = [sourceStation];
         let paths = [new ImmutablePath(sourceStation)];
 
         const visit = () => {
-
+            // Visits using BFS traversal
             let stationNode = stationProcessingQueue.shift();
 
             let currentPath = paths.shift();
