@@ -11,7 +11,6 @@ const Utils = {
 
     resultlog: function(description, value) {
         console.log("");
-        console.log("");
         console.log("=============================");
         console.log("Output #" + (++this.outputCount) + ": " + description);
         console.log("=============================");

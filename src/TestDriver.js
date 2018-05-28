@@ -41,3 +41,77 @@ Utils.resultlog("The length of the shortest route (in terms of distance to trave
 Utils.resultlog("The number of different routes from C to C with a distance of less than 30");
 routeInfoProvider.findPaths("C", "C", p => p.Distance < 30, p => p.Distance < 30)
                  .forEach(wpList => console.log(wpList.toString()));
+
+
+/*
+
+=============================
+Output #1: Distance of the route 'A-B-C'
+=============================
+9
+
+
+=============================
+Output #2: Distance of the route 'A-D'
+=============================
+5
+
+
+=============================
+Output #3: Distance of the route 'A-D-C'
+=============================
+13
+
+
+=============================
+Output #4: Distance of the route 'A-E-B-C-D'
+=============================
+22
+
+
+=============================
+Output #5: Distance of the route 'A-E-D'
+=============================
+NO SUCH ROUTE
+
+
+=============================
+Output #6: The number of trips starting at C and ending at C with a maximum of 3 stops
+=============================
+
+C, D, C
+C, E, B, C
+
+=============================
+Output #7: The number of trips starting at A and ending at C with exactly 4 stops.
+=============================
+
+A, B, C, D, C
+A, D, C, D, C
+A, D, E, B, C
+
+=============================
+Output #8: The length of the shortest route (in terms of distance to travel) from A to C
+=============================
+9
+
+
+=============================
+Output #9: The length of the shortest route (in terms of distance to travel) from B to B
+=============================
+9
+
+
+=============================
+Output #10: The number of different routes from C to C with a distance of less than 30
+=============================
+
+C, D, C
+C, D, C, E, B, C
+C, D, E, B, C
+C, E, B, C
+C, E, B, C, D, C
+C, E, B, C, E, B, C
+C, E, B, C, E, B, C, E, B, C
+
+*/

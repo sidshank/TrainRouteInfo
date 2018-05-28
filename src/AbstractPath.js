@@ -19,7 +19,7 @@ class AbstractPath {
      * @return {string} Comma-delimited names of nodes in the path
      */
     toString() {
-        return this.Nodes.map(n => n.getName()).join(",");
+        return this.Nodes.map(n => n.getName()).join(", ");
     }
 
     /**
