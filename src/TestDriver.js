@@ -1,6 +1,4 @@
 /* jshint esversion: 6 */
-
-let GraphBuilder = require("./GraphBuilder.js").GraphBuilder;
 let RouteInfoProvider  = require("./RouteInfoProvider.js").RouteInfoProvider;
 let Utils  = require("./Utils.js").Utils;
 
@@ -9,10 +7,10 @@ Utils.isLoggingEnabled = false;
 
 /* BUILD THE GRAPH REPRESENTATION */
 const graphRepresentation = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7";
-const graphBuilder = new GraphBuilder();
+const graphBuilder = RouteInfoProvider.createGraphBuilder();
 
 let graph = graphBuilder.setEntryDelimiter(",")
-            .setEncodingScheme("lln") // For entries of the form AB20
+            .setEncodingScheme("lln") // For entries of the form AB20 (LetterLetterNumber)
             .usingRepresentation(graphRepresentation)
             .build();
 

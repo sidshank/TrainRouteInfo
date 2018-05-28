@@ -1,0 +1,24 @@
+{
+  "name": "routeinfoprovider",
+  "version": "1.0.0",
+  "description": "A utility that accepts a directed graph with nodes and weighted edges, and provides APIs to query properties of the graph",
+  "main": "RouteInfoProvider.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "dependencies": {
+    "jest": "^23.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node TestDriver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sidshank@bitbucket.org/sidshank/RouteInfoProvider.git"
+  },
+  "author": "Siddhartha Shankar",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/sidshank/RouteInfoProvider#readme"
+}

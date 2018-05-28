@@ -18,8 +18,20 @@ class RouteInfoProvider {
         this.Graph = graph;
     }
 
+    /**
+     * Getter: Returns the maximum length of a search path.
+     * @return {number}
+     */
     static get MAX_PATH_SEARCH_LENGTH() {
         return 5000;
+    }
+
+    /**
+     * Creates a new GraphBuilder
+     * @returns {GraphBuilder}
+     */
+    static createGraphBuilder() {
+        return new GraphBuilder();
     }
 
     /**

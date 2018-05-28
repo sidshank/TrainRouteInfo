@@ -19,18 +19,17 @@ Download the files under the source tree into a single folder. No additional JS 
 ## Execution
 
 1. Navigate to the folder containing the downloaded files
-2. Type: **Node Main.js**, and press *ENTER*
+2. Type: **Node TestDriver.js**, and press *ENTER*
 
 ## Usage Example
 
-**Main.js** already uses the **RouteInfoProvider** to answer a few questions, and provides concrete examples of all the capabilities of this module. Here's a brief description of the usage:
+**TestDriver.js** already uses the **RouteInfoProvider** to answer a few questions, and provides concrete examples of all the capabilities of this module. Here's a brief description of the usage:
 
 ```javascript
-let GraphBuilder = require("./GraphBuilder.js").GraphBuilder;
 let RouteInfoProvider  = require("./RouteInfoProvider.js").RouteInfoProvider;
 
 /* BUILD THE GRAPH REPRESENTATION */
-const graphBuilder = new GraphBuilder();
+const graphBuilder = RouteInfoProvider.createGraphBuilder();
 const graphRepresentation = "AB5, BC4, CA7, AC3, AD20, DC18";
 let graph = graphBuilder.setEntryDelimiter(",") // inter-entry delimiter
             .setEncodingScheme("lln") // LetterLetterNumber
