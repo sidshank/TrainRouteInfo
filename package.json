@@ -7,10 +7,10 @@
     "doc": "doc",
     "test": "test"
   },
-  "dependencies": {
-    "jest": "^23.0.0"
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^23.0.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "node TestDriver.js"
   },
