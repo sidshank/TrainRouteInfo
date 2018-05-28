@@ -92,6 +92,10 @@ class RouteInfoProvider {
             }
 
             if (currentPath.NodeCount > RouteInfoProvider.MAX_PATH_SEARCH_LENGTH) {
+                // Avoid going off the rails (no pun intended) with our DFS traversal
+                // since we're working with cyclic graphs, and the path predicate may
+                // be ill-defined, or in the event that there is a bug in the traversal
+                // code.
                 throw "Node count in current path exceeded " + RouteInfoProvider.MAX_PATH_SEARCH_LENGTH;
             }
 
@@ -160,11 +164,13 @@ class RouteInfoProvider {
             let currentEndPoint = currentPath.EndPoint;
             let stationNode = stationProcessingQueue.shift();
             Utils.debuglog("Visiting " + stationNode);
+            
+            let currentDistance = currentPath.Distance;
 
             if (currentEndPoint && stationNode.equals(destinationStation) 
-                                && currentPath.Distance < shortestDistance) {
+                                && currentDistance < shortestDistance) {
                 Utils.debuglog("Found a path that matches the predicate: " + currentPath);
-                shortestDistance = currentPath.Distance;
+                shortestDistance = currenDistance;
             } else {
                 let outboundRoutes = stationNode.OutEdges;
                 for (let route of outboundRoutes) {
