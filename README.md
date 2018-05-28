@@ -65,7 +65,7 @@ let Utils  = require("./Utils.js").Utils;
 Utils.isLoggingEnabled = true;
 ```
 
-To set breakpoints and debug this source code, I would recomment using Visual Studio Code, a cross platform IDE, to set breakpoints and monitor the execution.
+To set breakpoints and debug this source code, I would recommend using Visual Studio Code, a cross platform IDE, to set breakpoints and monitor the execution.
 
 ## Meta
 
